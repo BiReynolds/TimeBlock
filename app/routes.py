@@ -1,16 +1,58 @@
-from flask import render_template, flash, redirect, get_flashed_messages,url_for
+from flask import render_template, flash, redirect, get_flashed_messages, url_for
 from app import app
+from app.models import testUser,testBlockType,testTaskType,testTask,testTimeBlock
 from app.forms import LoginForm
 
-## Temp test data
+from datetime import datetime,timezone
+
+## Temp test data ------------------------------------
+# Users
 users = {}
+usersById = {}
 for i in range(10):
-    users['test'+str(i)] = ['test'+str(i),'pass'+str(i)]
+    newUser = testUser(i,'test'+str(i),'pass'+str(i))
+    usersById[i] = newUser
+    users['test'+str(i)] = newUser
+
+# Block Types
+sleepBlock = testBlockType(0,'sleep',1,None,None,'D',0)
+workBlock = testBlockType(1,'work',None,1,None,'W',0)
+chillBlock = testBlockType(2,'chill',None,None,20,'M',0)
+
+blockTypes = {'sleep':sleepBlock,
+              'work':workBlock,
+              'chill':chillBlock}
+blockTypesById = {0:sleepBlock,
+                  1:workBlock,
+                  2:chillBlock}
+
+#TaskTypes
+doYourJob = testTaskType(0,"Do your job",300,1,None,None,'D',1,0)
+takeALunchBreak = testTaskType(1,"Take a lunch break",60,1,None,None,'D',1,0)
+playVideoGames = testTaskType(2,"Play video games",120,1,None,None,'D',2,0)
+petThatDog = testTaskType(3,"Pet that dog",60,1,None,None,'D',2,0)
+weeklyChillTask = testTaskType(4,"Weekly Chill Task",60,None,2,None,'W',2,0)
+monthlyWorkTask = testTaskType(5,"Monthly Work Task",60,None,None,3,'M',1,0)
+
+tasksTypesById = {
+             0:doYourJob,
+             1:takeALunchBreak,
+             2:playVideoGames,
+             3:petThatDog,
+             4:weeklyChillTask,
+             5:monthlyWorkTask}
+
+taskTypesByBlockType = {
+                    0:[],
+                    1:[doYourJob,takeALunchBreak,monthlyWorkTask],
+                    2:[playVideoGames,petThatDog,weeklyChillTask]}
+
+
 
 ## Helper functions
 def user_login(username,password):
     if username in users: 
-        if password == users[username][1]:
+        if password == users[username].password:
             return True,'Successfully logged in!',users[username]
         else:
             return False,'Incorrect Password',None
@@ -21,8 +63,7 @@ def user_login(username,password):
 @app.route('/')
 @app.route('/index')
 def index():
-    user = {'username':'guest',
-            'password':''}
+    user = users['test1']
     return render_template('index.html',user=user)
 
 @app.route('/login', methods=['GET','POST'])
@@ -38,3 +79,7 @@ def login():
         else:
             render_template('login.html', title='Sign In', form=form)
     return render_template('login.html', title='Sign In', form=form)
+
+@app.route('/testScreen', methods=['GET','POST'])
+def testScreen():
+    return render_template('testScreen.html',title = 'Sign In')

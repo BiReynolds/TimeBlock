@@ -1,0 +1,18 @@
+#DetailBlock {
+    position:absolute;
+    border:0;
+    padding:0;
+    left:0vw;
+    height:100vw;
+    width:50vw;
+    background-color:lightblue;
+}
+#TimelineBlock {
+    position:absolute;
+    border:0;
+    padding:0;
+    left:50vw;
+    height: 100vw;
+    width:50vw;
+    background-color:lightcoral;
+}
